@@ -1,6 +1,25 @@
 # gofall
 
+[![Go](https://github.com/SethCurry/gofall/actions/workflows/test.yml/badge.svg)](https://github.com/SethCurry/gofall/actions/workflows/test.yml)
+
+`gofall` is a Go wrapper around the [Scryfall API](https://scryfall.com/docs/api).
+It implements common methods of the API such as searching for cards, as well as
+utilities for iterating over Scryfall's bulk data exports.
+
 This project is not affiliated with Scryfall in any way.
+
+## Features
+
+- Bulk Data
+  - List bulk data
+  - Iterate over bulk data
+    - Cards
+    - Rulings
+- API
+  - Cards
+    - Named
+    - Search
+    - Autocomplete
 
 ## Examples
 
