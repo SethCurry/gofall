@@ -1,6 +1,7 @@
 # gofall
 
 [![Go](https://github.com/SethCurry/gofall/actions/workflows/test.yml/badge.svg)](https://github.com/SethCurry/gofall/actions/workflows/test.yml)
+[![Lint](https://github.com/SethCurry/gofall/actions/workflows/lint.yml/badge.svg)](https://github.com/SethCurry/gofall/actions/workflows/lint.yml)
 
 `gofall` is a Go wrapper around the [Scryfall API](https://scryfall.com/docs/api).
 It implements common methods of the API such as searching for cards, as well as
