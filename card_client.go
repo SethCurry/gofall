@@ -264,6 +264,20 @@ type CardSearchOptions struct {
 	IncludeVariations bool
 }
 
+func (c CardSearchOptions) addToQuery(q url.Values) {
+	if c.Unique != nil {
+		q.Add("unique", string(*c.Unique))
+	}
+
+	if c.Order != nil {
+		q.Add("order", string(*c.Order))
+	}
+
+	if c.Direction != nil {
+		q.Add("dir", string(*c.Direction))
+	}
+}
+
 func (c *CardClient) Search(ctx context.Context, query string, opts CardSearchOptions) (*CardSearchPager, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.scryfall.com/cards/search", nil)
 	if err != nil {
@@ -272,15 +286,7 @@ func (c *CardClient) Search(ctx context.Context, query string, opts CardSearchOp
 
 	q := req.URL.Query()
 	q.Add("q", query)
-	if opts.Unique != nil {
-		q.Add("unique", string(*opts.Unique))
-	}
-	if opts.Order != nil {
-		q.Add("order", string(*opts.Order))
-	}
-	if opts.Direction != nil {
-		q.Add("dir", string(*opts.Direction))
-	}
+	opts.addToQuery(q)
 
 	req.URL.RawQuery = q.Encode()
 
@@ -322,26 +328,41 @@ type RandomCardOptions struct {
 	Version *ImageType
 }
 
+func (r RandomCardOptions) validate() error {
+	if r.Query == "" {
+		return errors.New("query is required")
+	}
+
+	return nil
+}
+
+func (r RandomCardOptions) addToQuery(q url.Values) {
+	if r.Query != "" {
+		q.Add("q", r.Query)
+	}
+
+	if r.Face != "" {
+		q.Add("face", r.Face)
+	}
+
+	if r.Version != nil {
+		q.Add("version", string(*r.Version))
+	}
+}
+
 // Random returns a random card from the provided query.
 func (c *CardClient) Random(ctx context.Context, opts RandomCardOptions) (*Card, error) {
+	if err := opts.validate(); err != nil {
+		return nil, err
+	}
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.scryfall.com/cards/random", nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
 	}
 
 	q := req.URL.Query()
-
-	if opts.Query != "" {
-		q.Add("q", opts.Query)
-	}
-
-	if opts.Face != "" {
-		q.Add("face", opts.Face)
-	}
-
-	if opts.Version != nil {
-		q.Add("version", string(*opts.Version))
-	}
+	opts.addToQuery(q)
 
 	req.URL.RawQuery = q.Encode()
 
