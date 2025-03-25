@@ -19,14 +19,14 @@ func (r *RulingClient) ByScryfallID(ctx context.Context, id string) ([]Ruling, e
 		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
 	}
 
-	var list List[Ruling]
+	var lst listContainer[Ruling]
 
-	err = doRequest(r.client, req, &list)
+	err = doRequest(r.client, req, &lst)
 	if err != nil {
 		return nil, fmt.Errorf("failed to perform HTTP request: %w", err)
 	}
 
-	return list.Data, nil
+	return lst.Data, nil
 }
 
 func (r *RulingClient) ByMultiverseID(ctx context.Context, id int) ([]Ruling, error) {
@@ -35,7 +35,7 @@ func (r *RulingClient) ByMultiverseID(ctx context.Context, id int) ([]Ruling, er
 		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
 	}
 
-	var list List[Ruling]
+	var list listContainer[Ruling]
 
 	err = doRequest(r.client, req, &list)
 	if err != nil {
@@ -51,7 +51,7 @@ func (r *RulingClient) ByMTGOID(ctx context.Context, id int) ([]Ruling, error) {
 		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
 	}
 
-	var list List[Ruling]
+	var list listContainer[Ruling]
 
 	err = doRequest(r.client, req, &list)
 	if err != nil {
@@ -67,7 +67,7 @@ func (r *RulingClient) ByArenaID(ctx context.Context, id int) ([]Ruling, error) 
 		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
 	}
 
-	var list List[Ruling]
+	var list listContainer[Ruling]
 
 	err = doRequest(r.client, req, &list)
 	if err != nil {
@@ -83,7 +83,7 @@ func (r *RulingClient) ByCodeAndNumber(ctx context.Context, code string, number 
 		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
 	}
 
-	var list List[Ruling]
+	var list listContainer[Ruling]
 
 	err = doRequest(r.client, req, &list)
 	if err != nil {

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -54,30 +53,6 @@ type Client struct {
 	Rulings  *RulingClient
 }
 
-type APIError struct {
-	// The HTTP status code of the response
-	Status int `json:"status"`
-
-	// A machine-friendly code for the error condition
-	Code string `json:"code"`
-
-	Details string `json:"details"`
-
-	// A computer-friendly string specifying more details about the error condition.
-	// E.g. for a 404 it might return "ambiguous" if the request refers to multiple
-	// cards potentially.
-	//
-	// This field can be empty.
-	Type string `json:"type"`
-
-	// A series of human-readable errors.
-	Warnings []string `json:"warnings"`
-}
-
-func (a APIError) Error() string {
-	return fmt.Sprintf("API Error: %s: %s", a.Code, strings.Join(a.Warnings, " | "))
-}
-
 func doRequest(client *http.Client, req *http.Request, into interface{}) error {
 	resp, err := client.Do(req)
 	if err != nil {
@@ -87,17 +62,19 @@ func doRequest(client *http.Client, req *http.Request, into interface{}) error {
 
 	decoder := json.NewDecoder(resp.Body)
 
-	if resp.StatusCode >= 400 {
+	if resp.StatusCode != http.StatusOK {
 		var apiErr APIError
+		apiErr.Status = resp.StatusCode
+
 		if err := decoder.Decode(&apiErr); err != nil {
 			return fmt.Errorf("failed to decode respone: %w", err)
 		}
 
-		return &apiErr
-	}
+		if err := matchAPIError(&apiErr); err != nil {
+			return err
+		}
 
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+		return &apiErr
 	}
 
 	if err := decoder.Decode(into); err != nil {

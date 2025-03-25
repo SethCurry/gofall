@@ -12,7 +12,7 @@ func Test_Client_Card_Named(t *testing.T) {
 
 	client := gofall.NewClient(nil)
 
-	card, err := client.Card.Named(context.Background(), "Black Lotus")
+	card, err := client.Card.Named(context.Background(), gofall.CardNamedRequest{Fuzzy: "Black Lotus"})
 	if err != nil {
 		t.Fatalf("failed to query for Black Lotus by named: %v", err)
 	}

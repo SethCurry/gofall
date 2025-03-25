@@ -128,8 +128,9 @@ func TestBulkReader(t *testing.T) {
 		t.Fatalf("failed to read next card: %v", err)
 	}
 
-	if card.OracleID != "44623693-51d6-49ad-8cd7-140505caf02f" {
-		t.Errorf("card oracle ID %q does not match expected value", card.OracleID)
+	expectedID := "44623693-51d6-49ad-8cd7-140505caf02f"
+	if card.OracleID != expectedID {
+		t.Errorf("card oracle ID %q does not match expected value %q", card.OracleID, expectedID)
 	}
 
 	_, err = bulkReader.Next()
