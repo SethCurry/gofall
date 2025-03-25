@@ -320,9 +320,9 @@ type RandomCardOptions struct {
 	Query   string
 	Face    string
 	Version *ImageType
-	Pretty  bool
 }
 
+// Random returns a random card from the provided query.
 func (c *CardClient) Random(ctx context.Context, opts RandomCardOptions) (*Card, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.scryfall.com/cards/random", nil)
 	if err != nil {
@@ -343,10 +343,6 @@ func (c *CardClient) Random(ctx context.Context, opts RandomCardOptions) (*Card,
 		q.Add("version", string(*opts.Version))
 	}
 
-	if opts.Pretty {
-		q.Add("pretty", "true")
-	}
-
 	req.URL.RawQuery = q.Encode()
 
 	var card Card
@@ -359,6 +355,8 @@ func (c *CardClient) Random(ctx context.Context, opts RandomCardOptions) (*Card,
 	return &card, nil
 }
 
+// CardIdentifier allows providing one of several identifiers for a card.
+// At least one identifier is required to function.
 type CardIdentifier struct {
 	ID              string `json:"id"`
 	MTGOID          int    `json:"mtgo_id"`
