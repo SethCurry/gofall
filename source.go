@@ -6,6 +6,7 @@ import (
 	"fmt"
 )
 
+// ErrUnknownSource is returned when a ruling source is not recognized.
 var ErrUnknownSource = errors.New("unknown source")
 
 // Source is an enum representing the source of some information.

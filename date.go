@@ -45,7 +45,12 @@ func (d Date) MarshalText() ([]byte, error) {
 // MarshalJSON implements the json.Marshaler interface.
 // The generated date will be in the format YYYY-MM-DD.
 func (d Date) MarshalJSON() ([]byte, error) {
-	return json.Marshal(d.String())
+	marshalled, err := json.Marshal(d.String())
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal date: %w", err)
+	}
+
+	return marshalled, nil
 }
 
 // String returns the given date as a string in the format

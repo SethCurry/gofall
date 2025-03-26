@@ -55,17 +55,26 @@ func (o Object) MarshalJSON() ([]byte, error) {
 }
 
 const (
+	// ObjectList identifies an API response that contains a list of objects.
 	ObjectList = Object("list")
 
 	// ObjectBulkData represents a bulk data source.
-	ObjectBulkData    = Object("bulk_data")
-	ObjectRuling      = Object("ruling")
-	ObjectCard        = Object("card")
+	ObjectBulkData = Object("bulk_data")
+
+	// ObjectRuling identifies an API response that contains a ruling.
+	ObjectRuling = Object("ruling")
+
+	// ObjectCard identifies an API response that contains a card.
+	ObjectCard = Object("card")
+
+	// ObjectRelatedCard identifies an API response that contains a related card.
 	ObjectRelatedCard = Object("related_card")
-	ObjectCatalog     = Object("catalog")
+
+	// ObjectCatalog identifies an API response that contains a catalog.
+	ObjectCatalog = Object("catalog")
 )
 
-// ObjectList returns a list of all valid values of Object.
+// AllObjects returns a list of all valid values of Object.
 func AllObjects() []Object {
 	return []Object{
 		ObjectCard,

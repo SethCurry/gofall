@@ -22,22 +22,7 @@ This project is not affiliated with Scryfall in any way.
     - [x] Search
     - [x] Autocomplete
 
-## Examples
-
-### Cards
-
-Find a card by name:
-
-```go
-client := gofall.NewClient(nil)
-
-card, err := client.Card.Named("Lightning Bolt")
-if err != nil {
-    panic(err)
-}
-
-fmt.Println(card.ID)
-```
+## Example
 
 Search for cards:
 

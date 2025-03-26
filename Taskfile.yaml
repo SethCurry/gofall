@@ -1,0 +1,20 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  GREETING: Hello, World!
+
+tasks:
+  local-dir:
+    cmds:
+      - mkdir -p .local
+  cover:
+    deps:
+      - local-dir
+    cmds:
+      - go test -coverprofile=.local/coverage.out ./...
+      - go tool cover -func=.local/coverage.out | grep 'total:'
+  lint:
+    cmds:
+      - golangci-lint run

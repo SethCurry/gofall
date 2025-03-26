@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+// APIError is the response from the Scryfall API when an error occurs.
+// Most API methods in this package will return an APIError whenever possible.
 type APIError struct {
 	// The HTTP status code of the response
 	Status int `json:"status"`

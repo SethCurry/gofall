@@ -70,6 +70,7 @@ func TestBulkData(t *testing.T) {
 			if err != nil {
 				t.Fatalf("failed to read next card: %v", err)
 			}
+
 			if card == nil {
 				t.Error("card should not be nil")
 			}

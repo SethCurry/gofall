@@ -17,29 +17,6 @@ type CardClient struct {
 	client *http.Client
 }
 
-// ImageType defines the types of images such as small, normal, large, etc.
-type ImageType string
-
-const (
-	// ImageTypeSmall is the smallest image size.
-	ImageTypeSmall ImageType = "small"
-
-	// ImageTypeNormal is the normal image size.
-	ImageTypeNormal ImageType = "normal"
-
-	// ImageTypeLarge is the largest image size.
-	ImageTypeLarge ImageType = "large"
-
-	// ImageTypePng is the PNG image type.
-	ImageTypePng ImageType = "png"
-
-	// ImageTypeArtCrop is the art crop image type.
-	ImageTypeArtCrop ImageType = "art_crop"
-
-	// ImageTypeBorderCrop is the border crop image type.
-	ImageTypeBorderCrop ImageType = "border_crop"
-)
-
 // CardNamedRequest contains the parameters for a named card search.
 // You must provide either Exact or Fuzzy, but not both.
 type CardNamedRequest struct {
@@ -78,25 +55,25 @@ func (c CardNamedRequest) validate() error {
 // addToQuery adds the parameters to the provided URL query.
 // Unset parameters are not added to the query, and will use
 // Scryfall's default behavior.
-func (c CardNamedRequest) addToQuery(q url.Values) {
+func (c CardNamedRequest) addToQuery(query url.Values) {
 	if c.Exact != "" {
-		q.Add("exact", c.Exact)
+		query.Add("exact", c.Exact)
 	}
 
 	if c.Fuzzy != "" {
-		q.Add("fuzzy", c.Fuzzy)
+		query.Add("fuzzy", c.Fuzzy)
 	}
 
 	if c.Set != nil {
-		q.Add("set", *c.Set)
+		query.Add("set", *c.Set)
 	}
 
 	if c.Face != nil {
-		q.Add("face", *c.Face)
+		query.Add("face", *c.Face)
 	}
 
 	if c.Version != nil {
-		q.Add("version", string(*c.Version))
+		query.Add("version", string(*c.Version))
 	}
 }
 
@@ -114,9 +91,9 @@ func (c *CardClient) Named(ctx context.Context, options CardNamedRequest) (*Card
 		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
 	}
 
-	q := req.URL.Query()
-	options.addToQuery(q)
-	req.URL.RawQuery = q.Encode()
+	query := req.URL.Query()
+	options.addToQuery(query)
+	req.URL.RawQuery = query.Encode()
 
 	err = doRequest(c.client, req, &card)
 	if err != nil {
@@ -217,17 +194,17 @@ type CardSearchOptions struct {
 	IncludeVariations bool
 }
 
-func (c CardSearchOptions) addToQuery(q url.Values) {
+func (c CardSearchOptions) addToQuery(query url.Values) {
 	if c.Unique != nil {
-		q.Add("unique", string(*c.Unique))
+		query.Add("unique", string(*c.Unique))
 	}
 
 	if c.Order != nil {
-		q.Add("order", string(*c.Order))
+		query.Add("order", string(*c.Order))
 	}
 
 	if c.Direction != nil {
-		q.Add("dir", string(*c.Direction))
+		query.Add("dir", string(*c.Direction))
 	}
 }
 
@@ -284,13 +261,13 @@ type RandomCardOptions struct {
 	Version *ImageType
 }
 
-func (r RandomCardOptions) addToQuery(q url.Values) {
+func (r RandomCardOptions) addToQuery(query url.Values) {
 	if r.Face != "" {
-		q.Add("face", r.Face)
+		query.Add("face", r.Face)
 	}
 
 	if r.Version != nil {
-		q.Add("version", string(*r.Version))
+		query.Add("version", string(*r.Version))
 	}
 }
 

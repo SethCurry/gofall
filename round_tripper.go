@@ -11,6 +11,9 @@ func newRoundTripperError(inner error) *RoundTripperError {
 	return &RoundTripperError{Inner: inner}
 }
 
+// RoundTripperError is an error that occurs when a request fails to complete.
+// It exists to be able to detect errors stemming from the round tripper as
+// opposed to errors stemming from the API.
 type RoundTripperError struct {
 	Inner error
 }
@@ -51,22 +54,24 @@ func (r *roundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 	return nil, ErrTimeoutFromLimiter
 }
 
+// ErrTimeoutFromLimiter is returned when a request is timed out while waiting for
+// a request in the rate limiter to be available.
 var ErrTimeoutFromLimiter = errors.New("timed out while waiting for available request in rate limiter")
 
-func newRateLimiter(window time.Duration, max int) *rateLimiter {
+func newRateLimiter(window time.Duration, maxPerPeriod int) *rateLimiter {
 	return &rateLimiter{
-		window: window,
-		max:    max,
-		events: []time.Time{},
-		lock:   sync.RWMutex{},
+		window:       window,
+		maxPerPeriod: maxPerPeriod,
+		events:       []time.Time{},
+		lock:         sync.RWMutex{},
 	}
 }
 
 type rateLimiter struct {
-	window time.Duration
-	max    int
-	events []time.Time
-	lock   sync.RWMutex
+	window       time.Duration
+	maxPerPeriod int
+	events       []time.Time
+	lock         sync.RWMutex
 }
 
 func (r *rateLimiter) AddEvent() bool {
@@ -74,7 +79,7 @@ func (r *rateLimiter) AddEvent() bool {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
-	if len(r.events) >= r.max {
+	if len(r.events) >= r.maxPerPeriod {
 		return false
 	}
 
