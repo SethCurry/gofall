@@ -93,3 +93,23 @@ func ExampleCardClient_Search() {
 		}
 	}
 }
+
+func ExampleCardSearchPager() {
+	client := gofall.NewClient(nil)
+
+	cardPager, err := client.Card.Search(context.Background(), "cmc<5", gofall.CardSearchOptions{})
+	if err != nil {
+		panic(err)
+	}
+
+	for cardPager.HasMore() {
+		cards, err := cardPager.Next(context.Background())
+		if err != nil {
+			panic(err)
+		}
+
+		for _, card := range cards {
+			fmt.Println(card.Name)
+		}
+	}
+}

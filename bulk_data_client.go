@@ -60,7 +60,7 @@ func (b *BulkDataClient) ListSources(ctx context.Context) (*BulkDataSources, err
 		return nil, fmt.Errorf("failed to read response body: %w", err)
 	}
 
-	var dataList BulkDataSourcesList
+	var dataList bulkDataSourcesList
 
 	err = json.Unmarshal(body, &dataList)
 	if err != nil {
@@ -93,7 +93,7 @@ type BulkDataSource struct {
 	ContentEncoding string `json:"content_encoding"`
 }
 
-type BulkDataSourcesList struct {
+type bulkDataSourcesList struct {
 	Object string `json:"object"`
 	//nolint:tagliatelle
 	HasMore bool             `json:"has_more"`

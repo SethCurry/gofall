@@ -11,6 +11,8 @@ import (
 	"net/url"
 )
 
+// CardClient contains methods for querying Scryfall for cards by
+// a search query, name, etc.
 type CardClient struct {
 	client *http.Client
 }
@@ -133,16 +135,22 @@ type listContainer[T any] struct {
 	Warnings   []string `json:"warnings"`
 }
 
+// CardSearchPager allows reading through several pages of card search results.
 type CardSearchPager struct {
 	client   *http.Client
 	nextPage string
 	done     bool
 }
 
+// HasMore returns true if there are more pages of results left, or false
+// if it has already read all the pages.
 func (c *CardSearchPager) HasMore() bool {
 	return !c.done
 }
 
+// Next reads the next page of results from the search and returns the cards on it.
+// This does require an HTTP request, so it will incur latency.  This method is not safe
+// to call in a goroutine.
 func (c *CardSearchPager) Next(ctx context.Context) ([]Card, error) {
 	if c.done {
 		return nil, io.EOF
@@ -184,61 +192,6 @@ const (
 	// UniquePrint returns a single result per card print,
 	// effectively disabling the unique feature.
 	UniquePrint UniqueMode = "print"
-)
-
-// Order defines how the returned cards are sorted.
-type Order string
-
-const (
-	// OrderName sorts cards by name, A → Z
-	OrderName Order = "name"
-
-	// OrderSet sorts cards by their set and collector number: AAA/#1 → ZZZ/#999
-	OrderSet Order = "set"
-
-	// OrderReleased sorts cards by their release date: Newest → Oldest
-	OrderReleased Order = "released"
-
-	// OrderRarity sorts cards by their rarity: Common → Mythic
-	OrderRarity Order = "rarity"
-
-	// OrderColor sort cards by their color and color identity:
-	// WUBRG → multicolor → colorless
-	OrderColor Order = "color"
-
-	// OrderUSD sorts cards by their lowest known U.S. Dollar price:
-	// 0.01 → highest, null last
-	OrderUSD Order = "usd"
-
-	// OrderTix sorts cards by their lowest known
-	// TIX price: 0.01 → highest, null last
-	OrderTix Order = "tix"
-
-	// OrderEur sorts cards by their lowest known Euro price:
-	// 0.01 → highest, null last
-	OrderEur Order = "eur"
-
-	// OrderCMC sorts cards by their mana value: 0 → highest
-	OrderCMC Order = "cmc"
-
-	// OrderPower sorts cards by their power: null → highest
-	OrderPower Order = "power"
-
-	// OrderToughness sorts cards by their toughness: null → highest
-	OrderToughness Order = "toughness"
-
-	// OrderEDHREC sorts cards by their EDHREC ranking: lowest → highest
-	OrderEDHREC Order = "edhrec"
-
-	// OrderPenny sorts cards by their Penny Dreadful ranking: lowest → highest
-	OrderPenny Order = "penny"
-
-	// OrderArtist sorts cards by their front-side artist name: A → Z
-	OrderArtist Order = "artist"
-
-	// OrderReview sorts cards how podcasts review sets,
-	// usually color & CMC, lowest → highest, with Booster Fun cards at the end
-	OrderReview Order = "review"
 )
 
 // OrderDirection defines the direction of the sorting, eg ascending or descending.
@@ -304,6 +257,8 @@ type autocompleteResponse struct {
 	Data []string `json:"data"`
 }
 
+// Autocomplete returns a list of cards that start with the provided string.
+// Useful for providing autocomplete suggestions to users.
 func (c *CardClient) Autocomplete(ctx context.Context, query string) ([]string, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.scryfall.com/cards/autocomplete", nil)
 	if err != nil {
@@ -325,24 +280,11 @@ func (c *CardClient) Autocomplete(ctx context.Context, query string) ([]string, 
 }
 
 type RandomCardOptions struct {
-	Query   string
 	Face    string
 	Version *ImageType
 }
 
-func (r RandomCardOptions) validate() error {
-	if r.Query == "" {
-		return errors.New("query is required")
-	}
-
-	return nil
-}
-
 func (r RandomCardOptions) addToQuery(q url.Values) {
-	if r.Query != "" {
-		q.Add("q", r.Query)
-	}
-
 	if r.Face != "" {
 		q.Add("face", r.Face)
 	}
@@ -353,11 +295,7 @@ func (r RandomCardOptions) addToQuery(q url.Values) {
 }
 
 // Random returns a random card from the provided query.
-func (c *CardClient) Random(ctx context.Context, opts RandomCardOptions) (*Card, error) {
-	if err := opts.validate(); err != nil {
-		return nil, err
-	}
-
+func (c *CardClient) Random(ctx context.Context, query string, opts RandomCardOptions) (*Card, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.scryfall.com/cards/random", nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create HTTP request: %w", err)
@@ -365,6 +303,7 @@ func (c *CardClient) Random(ctx context.Context, opts RandomCardOptions) (*Card,
 
 	q := req.URL.Query()
 	opts.addToQuery(q)
+	q.Add("q", query)
 
 	req.URL.RawQuery = q.Encode()
 
