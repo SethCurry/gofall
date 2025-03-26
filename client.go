@@ -46,7 +46,8 @@ func NewClient(startingClient *http.Client) *Client {
 	}
 }
 
-// Client is the interface to Scryfall's API.
+// Client is the client to Scryfall's API.  Most functionality is
+// provided by this struct and its members.
 type Client struct {
 	Card     *CardClient
 	BulkData *BulkDataClient

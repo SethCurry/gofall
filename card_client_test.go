@@ -2,6 +2,7 @@ package gofall_test
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/SethCurry/gofall"
@@ -58,5 +59,37 @@ func Test_Client_Card_Autocomplete(t *testing.T) {
 
 	if len(autocomplete) != 1 {
 		t.Fatalf("expected one suggestion but got %d", len(autocomplete))
+	}
+}
+
+func ExampleCardClient_Named() {
+	client := gofall.NewClient(nil)
+
+	card, err := client.Card.Named(context.Background(), gofall.CardNamedRequest{Fuzzy: "Black Lotus"})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(card.Name)
+	fmt.Println(card.SetName)
+}
+
+func ExampleCardClient_Search() {
+	client := gofall.NewClient(nil)
+
+	cardPager, err := client.Card.Search(context.Background(), "cmc<5", gofall.CardSearchOptions{})
+	if err != nil {
+		panic(err)
+	}
+
+	for cardPager.HasMore() {
+		cards, err := cardPager.Next(context.Background())
+		if err != nil {
+			panic(err)
+		}
+
+		for _, card := range cards {
+			fmt.Println(card.Name)
+		}
 	}
 }

@@ -278,6 +278,8 @@ func (c CardSearchOptions) addToQuery(q url.Values) {
 	}
 }
 
+// Search queries Scryfall for cards matching the provided query.
+// See https://scryfall.com/docs/syntax for more information on the query syntax.
 func (c *CardClient) Search(ctx context.Context, query string, opts CardSearchOptions) (*CardSearchPager, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://api.scryfall.com/cards/search", nil)
 	if err != nil {

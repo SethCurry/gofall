@@ -6,6 +6,8 @@ import (
 	"fmt"
 )
 
+// ErrUnknownComponent is returned when unmarshaling an unknown Component
+// field from text or JSON.  The known components are listed in AllComponents().
 var ErrUnknownComponent = errors.New("unknown component")
 
 // Component represents the "component" field that
@@ -36,10 +38,12 @@ func (c Component) String() string {
 	return string(c)
 }
 
+// MarshalText implements the encoding.TextMarshaler interface.
 func (c Component) MarshalText() ([]byte, error) {
 	return []byte(c.String()), nil
 }
 
+// MarshalJSON implements the json.Marshaler interface.
 func (c Component) MarshalJSON() ([]byte, error) {
 	marshalled, err := json.Marshal(c.String())
 	if err != nil {
@@ -49,6 +53,7 @@ func (c Component) MarshalJSON() ([]byte, error) {
 	return marshalled, nil
 }
 
+// UnmarshalText implements the encoding.TextUnmarshaler interface.
 func (c *Component) UnmarshalText(txt []byte) error {
 	allComponents := AllComponents()
 	asStr := string(txt)
@@ -64,6 +69,7 @@ func (c *Component) UnmarshalText(txt []byte) error {
 	return fmt.Errorf("%w: %s", ErrUnknownComponent, string(txt))
 }
 
+// UnmarshalJSON implements the json.Unmarshaler interface.
 func (c *Component) UnmarshalJSON(txt []byte) error {
 	var unmarshed string
 

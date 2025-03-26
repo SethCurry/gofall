@@ -3,21 +3,54 @@ package gofall
 import "errors"
 
 type Card struct {
-	ID              string `json:"id"`
-	Name            string `json:"name"`
-	OracleID        string `json:"oracle_id"`
-	Rarity          string `json:"rarity"`
-	FlavorText      string `json:"flavor_text"`
-	CardBackID      string `json:"card_back_id"`
-	Artist          string `json:"artist"`
-	IllustrationID  string `json:"illustration_id"`
-	BorderColor     string `json:"border_color"`
-	Frame           string `json:"frame"`
-	Language        string `json:"lang"`
-	SetID           string `json:"set_id"`
-	SetCode         string `json:"set"`
-	SetName         string `json:"set_name"`
-	SetType         string `json:"set_type"`
+	// Scryfall's ID unique ID for the card.
+	ID string `json:"id"`
+
+	// The name of the card.  For dual-faced or split cards, it will look like:
+	// "$first_side_name // $second_side_name".  E.g. "Fire // Ice"
+	Name string `json:"name"`
+
+	// The Oracle ID for the card, from Wizards.
+	OracleID string `json:"oracle_id"`
+
+	// The rarity of the card as a string, such as "Common", "Uncommon", "Rare", etc.
+	Rarity string `json:"rarity"`
+
+	// The flavor text as printed on the card.
+	FlavorText string `json:"flavor_text"`
+
+	// The ID of the card back design.
+	CardBackID string `json:"card_back_id"`
+
+	// The name of the artist who created the card's illustration.
+	Artist string `json:"artist"`
+
+	// The ID of the illustration that was created for the card.
+	IllustrationID string `json:"illustration_id"`
+
+	// The border color of the card as a string.  Un-sets will have silver borders.
+	BorderColor string `json:"border_color"`
+
+	// Frame is the edition of the card frame used for the printing.
+	Frame string `json:"frame"`
+
+	// The language of the card printing.  This will influence fields like the
+	// flavor text, type line, and oracle text.
+	Language string `json:"lang"`
+
+	// SetID is Scryfall's UUID for the set.
+	SetID string `json:"set_id"`
+
+	// SetCode is the 3 character code for the set.
+	SetCode string `json:"set"`
+
+	// SetName is the full name of the set.
+	SetName string `json:"set_name"`
+
+	// SetType is the type of set this printing is in.
+	SetType string `json:"set_type"`
+
+	// SetURI is a link to the card's set object on Scryfall.
 	SetURI          string `json:"set_uri"`
 	SetSearchURI    string `json:"set_search_uri"`
 	ScryfallSetURI  string `json:"scryfall_set_uri"`
@@ -49,14 +82,29 @@ type Card struct {
 	Booster        bool `json:"booster"`
 	StorySpotlight bool `json:"story_spotlight"`
 
+	// The converted mana cost of the card.  This is only a float because of
+	// Un-set cards that have silly mana costs including half a mana.
 	CMC float32 `json:"cmc"`
 
-	MTGOID        int          `json:"mtgo_id"`
-	MTGOFoilID    int          `json:"mtgo_foil_id"`
-	TCGPlayerID   int          `json:"tcgplayer_id"`
-	CardmarketID  int          `json:"cardmarket_id"`
-	EDHRecRank    int          `json:"edhrec_rank"`
-	PennyRank     int          `json:"penny_rank"`
+	// The MTG: Online ID for the card.
+	MTGOID int `json:"mtgo_id"`
+
+	// The MTG: Online ID for the card's foil variant.
+	MTGOFoilID int `json:"mtgo_foil_id"`
+
+	// The TCGPlayer ID for the card.
+	TCGPlayerID int `json:"tcgplayer_id"`
+
+	// The CardMarket ID for the card.
+	CardmarketID int `json:"cardmarket_id"`
+
+	// The EDHREC rank of the card.
+	EDHRecRank int `json:"edhrec_rank"`
+
+	// The PennyRank of the card.
+	PennyRank int `json:"penny_rank"`
+
+	// The multiverse IDs for the card.
 	MultiverseIDs []int        `json:"multiverse_ids"`
 	Colors        []string     `json:"colors"`
 	ColorIdentity []string     `json:"color_identity"`

@@ -9,6 +9,8 @@ import (
 	"net/http"
 )
 
+// BulkDataClient contains methods for interacting with bulk data such
+// as dumps of the Scryfall database.
 type BulkDataClient struct {
 	client *http.Client
 }
