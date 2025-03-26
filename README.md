@@ -11,16 +11,16 @@ This project is not affiliated with Scryfall in any way.
 
 ## Features
 
-- Bulk Data
-  - List bulk data
-  - Iterate over bulk data
-    - Cards
-    - Rulings
+- [x] Bulk Data
+  - [x] List bulk data
+  - [x] Iterate over bulk data
+    - [x] Cards
+    - [x] Rulings
 - API
   - Cards
-    - Named
-    - Search
-    - Autocomplete
+    - [x]Named
+    - [x] Search
+    - [x] Autocomplete
 
 ## Examples
 
